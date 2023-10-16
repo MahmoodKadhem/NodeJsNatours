@@ -1,0 +1,42 @@
+{
+  "name": "nodejsnatours",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "start:dev": "nodemon server.js",
+    "start:prod": "NODE_ENV=production nodemon server.js",
+    "debug": "ndb server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^18.0.6",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongodb": "^6.1.0",
+    "mongoose": "^5.13.20",
+    "morgan": "^1.10.0",
+    "node-fetch": "^3.2.6",
+    "routes": "^2.1.0",
+    "slugify": "^1.6.6",
+    "validator": "^13.11.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MahmoodKadhem/NodeJsNatours.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MahmoodKadhem/NodeJsNatours/issues"
+  },
+  "homepage": "https://github.com/MahmoodKadhem/NodeJsNatours#readme",
+  "description": "",
+  "devDependencies": {
+    "ndb": "^1.1.5",
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
