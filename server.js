@@ -6,6 +6,7 @@ dotenv.config({ path: './config.env' });
 process.on('uncaughtException', (err, origin) => {
   console.log(origin);
   console.log(err.name, err.message);
+  console.log(err);
   process.exit(1);
 });
 

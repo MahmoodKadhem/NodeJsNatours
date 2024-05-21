@@ -83,3 +83,15 @@ start = "typescript-language-server --stdio"
 run = ["sh", "-c", "npm run start"]
 deploymentTarget = "cloudrun"
 ignorePorts = false
+
+[[ports]]
+localPort = 3000
+externalPort = 3000
+
+[[ports]]
+localPort = 8000
+externalPort = 80
+
+[auth]
+pageEnabled = false
+buttonEnabled = false

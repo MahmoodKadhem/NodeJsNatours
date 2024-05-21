@@ -1,14 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const tourController = require('./../controllers/tourController');
-const authController = require('./../controllers/authController');
 //////////////////////////////////PARAMS MIDDLEWARE///////////////////////
 // router.param('id', tourController.checkID)
 //////////////////////////////////ROUTES///////////////////////
 // Aliasing route
 router
   .route('/top-5-cheap-tours')
-  .get(tourController.aliasTopTour, tourController.getAllTours)
+  .get(tourController.aliasTopTour,tourController.getAllTours)
 
 router
   .route('/tour-stats')
@@ -19,13 +18,13 @@ router
 
 router
   .route('/')
-  .get(authController.protect, tourController.getAllTours)
+  .get(tourController.getAllTours)
   .post(tourController.createTour);
 
 router
   .route('/:id')
   .get(tourController.getTour)
   .patch(tourController.updateTour)
-  .delete(authController.protect,authController.restrictTo('admin'),tourController.deleteTour);
+  .delete(tourController.deleteTour);
 
 module.exports = router;
