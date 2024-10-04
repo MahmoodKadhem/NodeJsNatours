@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+// const User = require('./userModel'); //for embeding only no need for refrencing
+
 // const validator = require('validator');
 
 // creating a mongoos schema
@@ -51,7 +53,7 @@ const tourSchema = new mongoose.Schema({
   priceDiscount: {
     type: Number,
     validate: {
-      validator: function(val) {
+      validator: function (val) {
         // this only works when creating a new document not when update
         return val < this.price
       },
@@ -82,49 +84,103 @@ const tourSchema = new mongoose.Schema({
   secretTour: {
     type: Boolean,
     default: false
-  }
+  },
+  startLocation: {
+    // GeoJson
+    type: {
+      type: String,
+      default: 'Point',
+      enum: ['Point']
+    },
+    coordinates: [Number],
+    address: String,
+    description: String
+  },
+  locations: [
+    {
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point']
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+      day: Number
+    }
+  ],
+  // guides: Array //embeding users
+  guides: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User'
+    }
+  ]
 }, {
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
 })
 
 // virtual property
-tourSchema.virtual('durationWeeks').get(function() {
+tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7
+})
+
+// virtual populate to child refrence reviews to the tour
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour', //the place we store the connection in the review model.
+  localField: '_id' // the field we want to compate it to.
 })
 
 // mongoose DOCUMENT meddleware//////////////////////
 // pre will be run before the command 'save() and create()' but not on insertMany()
-tourSchema.pre('save', function(next) {
+tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next()
 })
 
-tourSchema.post('save', function(doc, next) {
+tourSchema.post('save', function (doc, next) {
   // console.log(doc);
   next();
 })
 
+// // Embeding users in the tour schema which is now what we want
+// tourSchema.pre('save', async function (next) {
+//   const guidesPromises = this.guides.map(async id => await user.findById(id)); //the result is a promises
+//   this.guides = await Promise.all(guidesPromises) // we need to wait for the promises
+//   next()
+// })
+
 // mongoose QUERY Middleware//////////////////////
 // tourSchema.pre('find', function(next) { //dosen't work with findOne
-tourSchema.pre(/^find/, function(next) { //reqular expression ^ start with
+tourSchema.pre(/^find/, function (next) { //reqular expression ^ start with
   this.find({ secretTour: { $ne: true } })
   this.start = Date.now()
   next();
 });
 
-tourSchema.post(/find/, function(doc, next) {
+// populate the guides userinfo as a middleware
+tourSchema.pre(/^find/, function (next) { //reqular expression ^ start with
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt -createdAt'
+  });
+  next();
+});
+
+tourSchema.post(/find/, function (doc, next) {
   console.log(`the query took: ${Date.now() - this.start} millisecondes`);
   // console.log(doc);
   next();
 })
 
 // mongoose AGGREGATION Middleware//////////////////////
-tourSchema.pre('aggregate', function(next) {
+tourSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
   // console.log(this.pipeline())
   next();
 })
 
 const Tour = mongoose.model('Tour', tourSchema);
-module.exports = Tour
+module.exports = Tour;

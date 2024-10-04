@@ -9,7 +9,7 @@ exports.aliasTopTour = (req, res, next) => {
   req.query.sort = 'price,-ratingsAverage';
   req.query.fields = 'name,ratingsAverage,price,summary,difficulty';
   next();
-}
+};
 
 //////////////////////////////////ROUTE HANDLERS///////////////////////
 exports.getAllTours = catchAsync(async (req, res, next) => {
@@ -31,10 +31,17 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
       tours
     }
   })
-})
+});
 
 exports.getTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id);
+  // const tour = await Tour.findById(req.params.id); // without populating the refrenced guides// populate guides as a middleware
+  // const tour = await Tour.findById(req.params.id).populate('guides'); //this will populate all the guides user info
+  // const tour = await Tour.findById(req.params.id).populate({
+  //   path: 'guides',
+  //   select: '-__v -passwordChangedAt -createdAt'
+  // }); //this will remove the populated fields of the -fieldNames from the query.
+  const tour = await Tour.findById(req.params.id).populate('reviews');
+
   // this is the same
   // const tour = await Tour.findOne({_id:req.params.id})
   // const tour = await Tour.findOne({name: req.params.id })
@@ -59,7 +66,7 @@ exports.createTour = catchAsync(async (req, res, next) => {
       tour: newTour
     }
   })
-})
+});
 
 exports.updateTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
@@ -77,7 +84,7 @@ exports.updateTour = catchAsync(async (req, res, next) => {
       tour
     }
   })
-})
+});
 
 exports.deleteTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findByIdAndDelete(req.params.id);
@@ -90,7 +97,7 @@ exports.deleteTour = catchAsync(async (req, res, next) => {
     status: 'success',
     data: null
   })
-})
+});
 
 
 // Aggregation
@@ -127,7 +134,7 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
       stats
     }
   })
-})
+});
 
 exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
   const year = req.params.year * 1;
@@ -172,4 +179,4 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
       plan
     }
   })
-})
+});
