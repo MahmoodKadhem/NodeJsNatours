@@ -8,6 +8,17 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'You must enter a name!']
   },
+  cpr: {
+    type: String,
+    required: [true, 'User must provide his CPR'],
+    unique: true,
+    trim: true,
+    max:
+      [9999999, 'The CPR must contain 9 numbers'],
+    min:
+      [100000000, 'The CPR must contain 9 numbers'],
+    // validate: [validator.isAlpha, 'Tour name must only contains charactors']
+  },
   email: {
     type: String,
     required: [true, 'Please enter an email address'],
@@ -18,7 +29,7 @@ const userSchema = new mongoose.Schema({
   photo: String,
   role: {
     type: String,
-    enum: ['user', 'guide', 'lead-guide', 'admin'],
+    enum: ['user', 'senior', 'admin'],
     default: 'user'
   },
   password: {
@@ -50,7 +61,9 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
     select: false
-  }
+  },
+  favorites: [String],
+  collections: [String],
   // }, {
   //   toJSON: { virtuals: true },
   //   toObject: { virtuals: true },
